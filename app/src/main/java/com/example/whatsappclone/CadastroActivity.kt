@@ -7,17 +7,24 @@ import android.os.Bundle
 import android.provider.ContactsContract.CommonDataKinds.Email
 import android.widget.Toast
 import com.example.whatsappclone.databinding.ActivityCadastroBinding
+import com.example.whatsappclone.model.Usuario
 import com.example.whatsappclone.utils.exibirMensagem
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.FirebaseAuthInvalidCredentialsException
 import com.google.firebase.auth.FirebaseAuthUserCollisionException
 import com.google.firebase.auth.FirebaseAuthWebException
+import com.google.firebase.storage.FirebaseStorage
 
 class CadastroActivity : AppCompatActivity() {
 
     private val binding by lazy {
         ActivityCadastroBinding.inflate(layoutInflater)
     }
+
+    private val firestore by lazy {
+        FirebaseStorage.getInstance()
+    }
+
     private lateinit var nome: String
     private lateinit var email: String
     private lateinit var senha: String
@@ -28,7 +35,7 @@ class CadastroActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         setContentView(binding.root)
         inicializarToolbar()
-        inicializarEventoClique()
+        //inicializarEventoClique()
     }
 
     private fun inicializarEventoClique() {
@@ -42,8 +49,16 @@ class CadastroActivity : AppCompatActivity() {
     private fun cadastrarUsuario(nome: String, email: String, senha: String) {
             firebaseAuth.createUserWithEmailAndPassword(email, senha).addOnCompleteListener { resultado ->
                if (resultado.isSuccessful) {
-                    exibirMensagem("Sucesso ao fazer seu cadastro")
+                   val idUsuario = resultado.result.user?.uid
+                   if (idUsuario != null){
+                       val usuario = Usuario(
+                           idUsuario, nome, email
+                       )
+                       salvarUsuarioFirestore(usuario)
+                   }
                    startActivity(Intent(applicationContext, MainActivity::class.java))
+
+
                }
             }.addOnFailureListener{ erro ->
                 try {
@@ -60,6 +75,16 @@ class CadastroActivity : AppCompatActivity() {
                 }
 
             }
+    }
+
+    private fun salvarUsuarioFirestore(usuario: Usuario) {
+            firestore.collection("usuarios").document(usuario.id)
+                .set(usuario)
+                .addOnSuccessListener {
+                    exibirMensagem("Sucesso ao fazer seu cadastro")
+                }.addOnFailureListener{
+                    exibirMensagem("Erro ao Fazer seu cadastro")
+                }
     }
 
     @SuppressLint("SuspiciousIndentation")
@@ -98,3 +123,5 @@ class CadastroActivity : AppCompatActivity() {
         }
     }
 }
+
+
