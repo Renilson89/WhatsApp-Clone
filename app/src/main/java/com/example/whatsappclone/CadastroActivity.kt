@@ -2,10 +2,25 @@ package com.example.whatsappclone
 
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
+import com.example.whatsappclone.databinding.ActivityCadastroBinding
 
 class CadastroActivity : AppCompatActivity() {
+
+    private val binding by lazy {
+        ActivityCadastroBinding.inflate(layoutInflater)
+    }
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        setContentView(R.layout.activity_cadastro)
+        setContentView(binding.root)
+        inicializarToolbar()
+    }
+
+    private fun inicializarToolbar() {
+        val toolbar = binding.IncludeToolbar.tbPrincipal
+        setSupportActionBar(toolbar)
+        supportActionBar?.apply {
+            title = "Faça o seu cadastro"
+            setDisplayHomeAsUpEnabled(true)
+        }
     }
 }
