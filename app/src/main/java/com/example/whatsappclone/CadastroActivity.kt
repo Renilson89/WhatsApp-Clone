@@ -13,6 +13,7 @@ import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.FirebaseAuthInvalidCredentialsException
 import com.google.firebase.auth.FirebaseAuthUserCollisionException
 import com.google.firebase.auth.FirebaseAuthWebException
+import com.google.firebase.firestore.FirebaseFirestore
 import com.google.firebase.storage.FirebaseStorage
 
 class CadastroActivity : AppCompatActivity() {
@@ -22,7 +23,7 @@ class CadastroActivity : AppCompatActivity() {
     }
 
     private val firestore by lazy {
-        FirebaseStorage.getInstance()
+        FirebaseFirestore.getInstance()
     }
 
     private lateinit var nome: String

@@ -15,4 +15,31 @@
         app:layout_constraintHorizontal_bias="0.5"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
+
+    <androidx.viewpager2.widget.ViewPager2
+        android:id="@+id/viewPagePrincipal"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        app:layout_constraintEnd_toStartOf="@+id/tabLayyoutPrincipal"
+        app:layout_constraintHorizontal_bias="0.0"
+        app:layout_constraintTop_toBottomOf="parent"/>
+
+    <com.google.android.material.tabs.TabLayout
+        android:id="@+id/tabLayyoutPrincipal"
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        android:background="@color/primaria"
+        app:layout_constraintBottom_toTopOf="@+id/includeMainToolbar"
+        app:layout_constraintEnd_toStartOf="@+id/includeMainToolbar"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:tabIndicatorColor="@color/white"
+        app:tabIndicatorHeight="5dp"
+        app:tabSelectedTextColor="@color/white"
+        app:tabTextColor="@color/cinza">
+
+
+    </com.google.android.material.tabs.TabLayout>
+
+
 </androidx.constraintlayout.widget.ConstraintLayout>
