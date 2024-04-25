@@ -1,4 +1,4 @@
-package com.example.whatsappclone
+package com.example.whatsappclone.activitys
 
 import android.content.Intent
 import androidx.appcompat.app.AppCompatActivity
@@ -8,6 +8,7 @@ import android.view.MenuInflater
 import android.view.MenuItem
 import androidx.appcompat.app.AlertDialog
 import androidx.core.view.MenuProvider
+import com.example.whatsappclone.R
 import com.example.whatsappclone.adaptes.viewPagerAdapter
 import com.example.whatsappclone.databinding.ActivityMainBinding
 import com.google.android.material.tabs.TabLayoutMediator

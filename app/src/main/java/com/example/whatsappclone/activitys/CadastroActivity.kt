@@ -1,11 +1,9 @@
-package com.example.whatsappclone
+package com.example.whatsappclone.activitys
 
 import android.annotation.SuppressLint
 import android.content.Intent
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
-import android.provider.ContactsContract.CommonDataKinds.Email
-import android.widget.Toast
 import com.example.whatsappclone.databinding.ActivityCadastroBinding
 import com.example.whatsappclone.model.Usuario
 import com.example.whatsappclone.utils.exibirMensagem
@@ -14,7 +12,6 @@ import com.google.firebase.auth.FirebaseAuthInvalidCredentialsException
 import com.google.firebase.auth.FirebaseAuthUserCollisionException
 import com.google.firebase.auth.FirebaseAuthWebException
 import com.google.firebase.firestore.FirebaseFirestore
-import com.google.firebase.storage.FirebaseStorage
 
 class CadastroActivity : AppCompatActivity() {
 
@@ -36,7 +33,7 @@ class CadastroActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         setContentView(binding.root)
         inicializarToolbar()
-        //inicializarEventoClique()
+        inicializarEventoClique()
     }
 
     private fun inicializarEventoClique() {
