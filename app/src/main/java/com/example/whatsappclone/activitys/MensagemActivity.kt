@@ -4,9 +4,9 @@ import android.os.Build
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import androidx.recyclerview.widget.LinearLayoutManager
-import com.example.whatsappclone.adaptes.ContatosAdpter
-import com.example.whatsappclone.adaptes.ConversasAdpter
+import com.example.whatsappclone.adaptes.MensagensAdpter
 import com.example.whatsappclone.databinding.ActivityMensagemBinding
+import com.example.whatsappclone.model.Conversa
 import com.example.whatsappclone.model.Mensagem
 import com.example.whatsappclone.model.Usuario
 import com.example.whatsappclone.utils.Constantes
@@ -15,7 +15,6 @@ import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.FirebaseFirestore
 import com.google.firebase.firestore.ListenerRegistration
 import com.google.firebase.firestore.Query
-import com.google.firebase.firestore.ktx.toObject
 import com.squareup.picasso.Picasso
 
 class MensagemActivity : AppCompatActivity() {
@@ -31,14 +30,15 @@ class MensagemActivity : AppCompatActivity() {
         ActivityMensagemBinding.inflate(layoutInflater)
     }
 
-    private lateinit var coversasAdapter: ConversasAdpter
+    private lateinit var coversasAdapter: MensagensAdpter
     private lateinit var listenerRegistration: ListenerRegistration
     private var dadosDestinatario: Usuario? = null
+    private var dadosUsuarioRemetente: Usuario? = null
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(binding.root)
-        recuperarDadosUserDestinatario()
+        recuperarDadosUsuario()
         inicializarToolbar()
         inicializarEventosClique()
         inicializarRecycleView()
@@ -47,7 +47,7 @@ class MensagemActivity : AppCompatActivity() {
 
     private fun inicializarRecycleView() {
         with(binding){
-            coversasAdapter = ConversasAdpter()
+            coversasAdapter = MensagensAdpter()
             rvMensagem.adapter = coversasAdapter
             rvMensagem.layoutManager = LinearLayoutManager(applicationContext)
         }
@@ -105,12 +105,35 @@ class MensagemActivity : AppCompatActivity() {
                 salvarMensagemFirestore(
                     idUsuarioRemetente, idUsuarioDestinatario, mensagem
                 )
+                val conversaRemetente = Conversa(
+                    idUsuarioRemetente, idUsuarioDestinatario,
+                    dadosDestinatario!!.foto, dadosDestinatario!!.nome,
+                    textMensagem
+                )
+                salvarConversaFirestore(conversaRemetente)
                 salvarMensagemFirestore(
                      idUsuarioDestinatario,idUsuarioRemetente, mensagem
                 )
+                val conversaDestinatario = Conversa(
+                    idUsuarioDestinatario, idUsuarioRemetente,
+                    dadosUsuarioRemetente!!.foto, dadosUsuarioRemetente!!.nome,
+                    textMensagem
+                )
+                salvarConversaFirestore(conversaDestinatario)
                 binding.editMensagem.setText("")
             }
         }
+    }
+
+    private fun salvarConversaFirestore(conversaRemetente: Conversa) {
+        firestore.collection(Constantes.CONVERSAS)
+            .document(conversaRemetente.idUsuarioRemetente)
+            .collection(Constantes.ULTIMAS_CONVERSAS)
+            .document(conversaRemetente.idUsuarioDestinatario)
+            .set(conversaRemetente)
+            .addOnFailureListener {
+                exibirMensagem("Erro")
+            }
     }
 
     private fun salvarMensagemFirestore(
@@ -140,7 +163,20 @@ class MensagemActivity : AppCompatActivity() {
         }
     }
 
-    private fun recuperarDadosUserDestinatario() {
+    private fun recuperarDadosUsuario() {
+        val idUsuarioRemetente = fibaseAuth.currentUser?.uid
+        if (idUsuarioRemetente != null) {
+            firestore.collection(Constantes.USUARIOS)
+                .document(idUsuarioRemetente)
+                .get()
+                .addOnSuccessListener { documentSnapshot ->
+                    val usuario = documentSnapshot.toObject(Usuario::class.java)
+                    if(usuario != null){
+                        dadosUsuarioRemetente = usuario
+                    }
+                }
+        }
+
         val extras = intent.extras
         if (extras != null){
             val origem = extras.getString("origem")
